@@ -1,0 +1,23 @@
+---
+- hosts: localhost
+  connection: local
+  tasks:
+    - name: Build Docker image from JAR
+      docker_image:
+        name: vgik/hello-app
+        tag: latest
+        build:
+          path: /opt/app
+          dockerfile: Dockerfile
+        source: build
+
+    - name: Login to DockerHub
+      docker_login:
+        username: "{{ docker_user }}"
+        password: "{{ docker_pass }}"
+
+    - name: Push image to DockerHub
+      docker_image:
+        name: vgik/hello-app
+        push: yes
+        source: local

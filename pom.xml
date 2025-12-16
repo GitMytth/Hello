@@ -49,6 +49,13 @@
         </dependency>
     </dependencies>
 
+    <distributionManagement>
+        <snapshotRepository>
+            <id>nmaven-central</id>
+            <url>http://nexus:8081/repository/maven-central/</url>
+        </snapshotRepository>
+    </distributionManagement>
+
     <build>
         <plugins>
             <plugin>

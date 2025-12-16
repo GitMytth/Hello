@@ -1,27 +1,35 @@
+version: '3'
 services:
   jenkins:
-    build: .
-    privileged: true
-    networks:
-      - jenkins
+    image: jenkins/jenkins:lts
+    container_name: jenkins
     ports:
-      - "8086:8080"
+      - "8087:8080"
       - "50000:50000"
-      - "3000:3000"
-      - "5000:5000"
-      - "2376:2376"
     volumes:
-      - "//var/run/docker.sock:/var/run/docker.sock"
-    
+      - jenkins_home:/var/jenkins_home
+    depends_on:
+      - nexus
+      - ansible-host
 
   nexus:
-    image: sonatype/nexus3:3.68.1
-    privileged: true
-    networks:
-      - jenkins
+    image: sonatype/nexus3
+    container_name: nexus
     ports:
       - "8081:8081"
+      - "8082:8082" # Порт для Docker Registry 
+    volumes:
+      - nexus_data:/nexus-data
 
-networks:
-  docker:
-  jenkins:
+  ansible-host:
+    build: . # Мы соберем свой образ
+    container_name: ansible-host
+    privileged: true
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock # Проброс демона докера
+    ports:
+      - "2222:22"
+
+volumes:
+  jenkins_home:
+  nexus_data:
